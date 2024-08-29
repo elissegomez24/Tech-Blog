@@ -1,0 +1,10 @@
+{{> navbar}}
+<main>
+  <h1>Welcome to the Blog</h1>
+  {{#each posts}}
+    <article>
+      <h2><a href="/post/{{this.id}}">{{this.title}}</a></h2>
+      <p>by {{this.user.username}} on {{this.createdAt}}</p>
+    </article>
+  {{/each}}
+</main>
