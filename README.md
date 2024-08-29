@@ -1,2 +1,2 @@
 # Tech-Blog
-Model-View-Controller (MVC) Challenge 
+Model-View-Controller (MVC) Challenge: Tech Blog 
