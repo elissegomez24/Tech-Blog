@@ -1,16 +1,28 @@
-{{> navbar}}
-<main>
-  <article>
-    <h1>{{post.title}}</h1>
-    <p>by {{post.user.username}} on {{post.createdAt}}</p>
-    <p>{{post.content}}</p>
-    {{#if loggedIn}}
-    <form action="/comment" method="POST">
-      <textarea name="comment" placeholder="Leave a comment"></textarea>
-      <button type="submit">Submit</button>
-    </form>
-    {{else}}
-    <p>You must be logged in to leave a comment.</p>
-    {{/if}}
-  </article>
-</main>
+<h1>{{post.title}}</h1>
+<p>By {{post.username}} on {{post.createdAt}}</p>
+<p>{{post.content}}</p>
+
+{{#if loggedIn}}
+  <h2>Leave a Comment</h2>
+  <form action="/post/{{post.id}}/comment" method="POST">
+    <textarea name="comment" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+{{/if}}
+
+{{#if post.comments.length}}
+  <h2>Comments</h2>
+  <ul>
+    {{#each post.comments}}
+      <li>
+        <p>{{this.comment_text}}
+          -
+          <strong>{{this.username}}</strong>
+          on
+          {{this.createdAt}}</p>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No comments yet.</p>
+{{/if}}

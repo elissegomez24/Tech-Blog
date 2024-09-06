@@ -1,10 +1,13 @@
-{{> navbar}}
-<main>
-  <h1>Welcome to the Blog</h1>
-  {{#each posts}}
-    <article>
-      <h2><a href="/post/{{this.id}}">{{this.title}}</a></h2>
-      <p>by {{this.user.username}} on {{this.createdAt}}</p>
-    </article>
-  {{/each}}
-</main>
+<h1>The Tech Blog</h1>
+{{#if posts.length}}
+  <ul>
+    {{#each posts}}
+      <li>
+        <a href="/post/{{this.id}}">{{this.title}}</a>
+        <p>{{this.createdAt}}</p>
+      </li>
+    {{/each}}
+  </ul>
+{{else}}
+  <p>No blog posts available.</p>
+{{/if}}

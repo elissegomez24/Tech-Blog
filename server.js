@@ -1,37 +1,49 @@
-const path = require("path");
-const express = require("express");
-const session = require("express-session");
-const exphbs = require("express-handlebars");
-const routes = require("./controllers");
-const sequelize = require("./config/connection");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const express = require('express');
+const { engine } = require('express-handlebars');
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const sequelize = require('./config/connection');
+const userRoutes = require('./controllers/api/userRoutes');
+const postRoutes = require('./controllers/api/postRoutes');
+const commentRoutes = require('./controllers/api/commentRoutes');
+const homeRoutes = require('./controllers/api/homeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const hbs = exphbs.create({});
+// Set up Handlebars
+app.engine('handlebars', engine({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
 
-const sess = {
-  secret: process.env.SESSION_SECRET,
-  cookie: {},
-  resave: false,
-  saveUninitialized: true,
-  store: new SequelizeStore({
-    db: sequelize,
-  }),
-};
-
-app.use(session(sess));
-
-app.engine("handlebars", hbs.engine);
-app.set("view engine", "handlebars");
-
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static('public'));
 
-app.use(routes);
+// Set up session
+const sessionStore = new SequelizeStore({ db: sequelize });
+app.use(
+  session({
+    secret: 'supersecretkey',
+    resave: false,
+    saveUninitialized: true,
+    store: sessionStore,
+  })
+);
 
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log(`Now listening on port ${PORT}`));
-});
+// Sync database
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('Database & tables created!');
+  })
+  .catch(err => {
+    console.error('Error syncing database:', err);
+  });
+
+// Use routers
+app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/', homeRoutes);
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

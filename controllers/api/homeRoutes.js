@@ -1,42 +1,34 @@
-const router = require("express").Router();
-const { Post, User, Comment } = require("../models");
+// controllers/homeRoutes.js
+const router = require('express').Router();
+const { Post, Comment, User } = require('../../models');
 
-// Homepage route
-router.get("/", async (req, res) => {
-  try {
-    const postData = await Post.findAll({
-      include: [User],
-    });
-    const posts = postData.map((post) => post.get({ plain: true }));
-    res.render("homepage", {
-      posts,
-      loggedIn: req.session.loggedIn,
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
+// Render the homepage with all posts
+router.get('/', async (req, res) => {
+    try {
+        const posts = await Post.findAll({
+            include: [User] // Adjust as needed for your models
+        });
+        res.render('homepage', { posts });
+    } catch (err) {
+        res.status(500).json(err);
+    }
 });
 
-// Single post route
-router.get("/post/:id", async (req, res) => {
-  try {
-    const postData = await Post.findByPk(req.params.id, {
-      include: [
-        User,
-        {
-          model: Comment,
-          include: [User],
-        },
-      ],
-    });
-    const post = postData.get({ plain: true });
-    res.render("post", {
-      post,
-      loggedIn: req.session.loggedIn,
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
+// Render a single post and its comments
+router.get('/post/:id', async (req, res) => {
+    try {
+        const post = await Post.findByPk(req.params.id, {
+            include: [User, Comment]
+        });
+        if (!post) {
+            return res.status(404).render('404'); // Render a 404 page if post not found
+        }
+        res.render('post', { post });
+    } catch (err) {
+        res.status(500).json(err);
+    }
 });
+
+// Add more routes as needed
 
 module.exports = router;
