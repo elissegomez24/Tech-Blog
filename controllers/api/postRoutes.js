@@ -17,26 +17,19 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Single post route
-router.get("/post/:id", async (req, res) => {
+// Create Post Route
+router.post('/', async (req, res) => {
   try {
-    const postData = await Post.findByPk(req.params.id, {
-      include: [
-        User,
-        {
-          model: Comment,
-          include: [User],
-        },
-      ],
+    const newPost = await Post.create({
+      title: req.body.title,
+      content: req.body.content,
+      userId: req.session.userId,
     });
-    const post = postData.get({ plain: true });
-    res.render("post", {
-      post,
-      loggedIn: req.session.loggedIn,
-    });
+    res.status(200).json(newPost);
   } catch (err) {
     res.status(500).json(err);
   }
 });
+
 
 module.exports = router;

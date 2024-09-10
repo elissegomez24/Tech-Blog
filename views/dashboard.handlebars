@@ -1,0 +1,11 @@
+<h1>Your Dashboard</h1>
+<a href="/create-post">Add New Post</a>
+
+{{#each posts}}
+  <h2>{{this.title}}</h2>
+  <a href="/post/{{this.id}}">View Post</a>
+  <a href="/edit-post/{{this.id}}">Edit</a>
+  <form action="/delete-post/{{this.id}}" method="POST">
+    <button type="submit">Delete</button>
+  </form>
+{{/each}}

@@ -6,7 +6,7 @@ const sequelize = require('./config/connection');
 const userRoutes = require('./controllers/api/userRoutes');
 const postRoutes = require('./controllers/api/postRoutes');
 const commentRoutes = require('./controllers/api/commentRoutes');
-const homeRoutes = require('./controllers/api/homeRoutes');
+const homeRoutes = require('./controllers/homeRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,13 +21,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Set up session
-const sessionStore = new SequelizeStore({ db: sequelize });
 app.use(
   session({
-    secret: 'supersecretkey',
+    secret: 'Super secret secret',
+    cookie: { maxAge: 600000 },
     resave: false,
     saveUninitialized: true,
-    store: sessionStore,
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
   })
 );
 
@@ -41,9 +43,9 @@ sequelize.sync({ force: false })
   });
 
 // Use routers
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/', homeRoutes);
+app.use('/', homeRoutes);  // Main routes (login, homepage, dashboard)
+app.use('/api/users', userRoutes);  // API routes for user login and registration
+app.use('/api/posts', postRoutes);  // API routes for posts
+app.use('/api/comments', commentRoutes);  // API routes for comments
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

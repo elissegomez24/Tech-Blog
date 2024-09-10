@@ -1,28 +1,12 @@
 <h1>{{post.title}}</h1>
-<p>By {{post.username}} on {{post.createdAt}}</p>
+<p>By {{post.user.username}} on {{post.created_at}}</p>
 <p>{{post.content}}</p>
 
 {{#if loggedIn}}
-  <h2>Leave a Comment</h2>
-  <form action="/post/{{post.id}}/comment" method="POST">
-    <textarea name="comment" required></textarea>
+  <form class="comment-form" data-post-id="{{post.id}}">
+    <textarea placeholder="Leave a comment..."></textarea>
     <button type="submit">Submit</button>
   </form>
-{{/if}}
-
-{{#if post.comments.length}}
-  <h2>Comments</h2>
-  <ul>
-    {{#each post.comments}}
-      <li>
-        <p>{{this.comment_text}}
-          -
-          <strong>{{this.username}}</strong>
-          on
-          {{this.createdAt}}</p>
-      </li>
-    {{/each}}
-  </ul>
 {{else}}
-  <p>No comments yet.</p>
+  <p>You need to <a href="/login">log in</a> to leave a comment.</p>
 {{/if}}

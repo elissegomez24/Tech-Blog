@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p>— ${comment.user.username} on ${new Date(comment.created_at).toLocaleDateString()}</p>
             `;
                     commentSection.appendChild(newComment);
-                    form.querySelector('textarea').value = ''; // Clear the textarea
+                    form.querySelector('textarea').value = '';
                 } else {
                     alert('Failed to submit comment. Please try again.');
                 }
