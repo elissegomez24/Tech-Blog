@@ -4,7 +4,10 @@ const { Post, User } = require('../models');
 // Homepage route
 router.get('/', async (req, res) => {
     try {
-        const posts = await Post.findAll({ include: [User] });
+        const posts = await Post.findAll({
+            include: [{ model: User, attributes: ['username'] }],
+            order: [['createdAt', 'DESC']],
+        });
         const postList = posts.map(post => post.get({ plain: true }));
         res.render('homepage', {
             posts: postList,
@@ -51,9 +54,24 @@ router.get('/create-post', (req, res) => {
 router.get('/post/:id', async (req, res) => {
     try {
         const post = await Post.findByPk(req.params.id, {
-            include: [User]
+            include: [
+                { model: User, attributes: ['username'] },
+                {
+                    model: Comment,
+                    include: [{ model: User, attributes: ['username'] }],
+                },
+            ],
         });
-        res.render('post', { post });
+
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        res.render('post', {
+            post: post.get({ plain: true }),
+            loggedIn: req.session.loggedIn,
+        });
     } catch (err) {
         res.status(500).json(err);
     }

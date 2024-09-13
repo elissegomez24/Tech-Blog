@@ -21,31 +21,30 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Set up session
-app.use(
-  session({
-    secret: 'Super secret secret',
-    cookie: { maxAge: 600000 },
-    resave: false,
-    saveUninitialized: true,
-    store: new SequelizeStore({
-      db: sequelize,
-    }),
-  })
-);
+const sess = {
+  secret: 'Super secret secret',
+  cookie: {
+    maxAge: 300000, // Idle time 
+    httpOnly: true,
+    secure: false,
+    sameSite: 'strict',
+  },
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize,
+  }),
+};
 
-// Sync database
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('Database & tables created!');
-  })
-  .catch(err => {
-    console.error('Error syncing database:', err);
-  });
+app.use(session(sess));
 
-// Use routers
-app.use('/', homeRoutes);  // Main routes (login, homepage, dashboard)
-app.use('/api/users', userRoutes);  // API routes for user login and registration
-app.use('/api/posts', postRoutes);  // API routes for posts
-app.use('/api/comments', commentRoutes);  // API routes for comments
+// Use routes
+app.use('/api/users', userRoutes); // Ensure the route prefix is correctly set
+app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/', homeRoutes);
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Sync Sequelize and start the server
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+});
