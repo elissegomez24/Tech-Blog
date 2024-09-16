@@ -1,79 +1,75 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
 const { Comment } = require('../../models');
+const withAuth = require('../../utils/auth');
 
-// Get all comments
-router.get('/', async (req, res) => {
+// Get all comments for a specific post
+router.get('/post/:postId', async (req, res) => {
     try {
-        const comments = await Comment.findAll();
+        const comments = await Comment.findAll({
+            where: {
+                post_id: req.params.postId,
+            },
+        });
+
         res.json(comments);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-// Get a single comment by ID
-router.get('/:id', async (req, res) => {
+// Create a new comment
+router.post('/', withAuth, async (req, res) => {
     try {
-        const comment = await Comment.findByPk(req.params.id);
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-        res.json(comment);
+        const newComment = await Comment.create({
+            content: req.body.content,
+            user_id: req.session.user_id,
+            post_id: req.body.post_id,
+        });
+
+        res.status(201).json(newComment);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-// Create a new comment
-router.post('/', async (req, res) => {
-    if (!req.session.loggedIn) {
-        return res.status(401).json({ message: 'Please log in to comment' });
-    }
-
+// Update an existing comment
+router.put('/:id', withAuth, async (req, res) => {
     try {
-        const newComment = await Comment.create({
-            comment_text: req.body.comment_text,
-            user_id: req.session.userId,  // Session-based user authentication
-            post_id: req.body.post_id,
-        });
-        res.status(201).json(newComment);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
+        const [updated] = await Comment.update(
+            { content: req.body.content },
+            {
+                where: {
+                    id: req.params.id,
+                    user_id: req.session.user_id,
+                },
+            }
+        );
 
-
-// Update a comment by ID
-router.put('/:id', async (req, res) => {
-    try {
-        const [updated] = await Comment.update(req.body, {
-            where: {
-                id: req.params.id,
-            },
-        });
         if (updated) {
-            const updatedComment = await Comment.findByPk(req.params.id);
-            res.json(updatedComment);
+            res.status(200).json({ message: 'Comment updated successfully' });
         } else {
-            res.status(404).json({ message: 'Comment not found' });
+            res.status(404).json({ message: 'Comment not found or not authorized' });
         }
     } catch (err) {
-        res.status(400).json(err);
+        res.status(500).json(err);
     }
 });
 
-// Delete a comment by ID
-router.delete('/:id', async (req, res) => {
+// Delete a comment
+router.delete('/:id', withAuth, async (req, res) => {
     try {
         const deleted = await Comment.destroy({
             where: {
                 id: req.params.id,
+                user_id: req.session.user_id,
             },
         });
+
         if (deleted) {
             res.status(204).end();
         } else {
-            res.status(404).json({ message: 'Comment not found' });
+            res.status(404).json({ message: 'Comment not found or not authorized' });
         }
     } catch (err) {
         res.status(500).json(err);

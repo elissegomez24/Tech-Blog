@@ -1,0 +1,8 @@
+<h1>No Posts Available</h1>
+<p>It looks like there are no recent posts. You can create a new one!</p>
+
+{{#if logged_in}}
+  <a href="/create-post" class="btn btn-primary">Create Post</a>
+{{else}}
+  <p>Please <a href="/login">log in</a> to create a post.</p>
+{{/if}}

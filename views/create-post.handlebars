@@ -1,26 +1,25 @@
-<h1>Create a New Post</h1>
-<form id="create-post-form">
-    <input type="text" name="title" placeholder="Title" required />
-    <textarea name="content" placeholder="Content" required></textarea>
-    <button type="submit">Create Post</button>
-</form>
+<html lang="en">
 
-<script>
-    document.querySelector('#create-post-form').addEventListener('submit', async
-        (event) => {
-            event.preventDefault(); const title =
-                document.querySelector('input[name="title"]').value.trim(); const content =
-                    document.querySelector('textarea[name="content"]').value.trim(); if(title &&
-    content) {
-        const response = await fetch('/api/posts', {
-            method: 'POST', body:
-                JSON.stringify({ title, content }), headers: {
-                    'Content-Type':
-                        'application/json'
-                },
-        }); if (response.ok) {
-            document.location.replace('/dashboard'); // Redirect to the dashboard after
-            creating a post
-        } else { alert('Failed to create post.'); }
-    } });
-</script>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Post</title>
+</head>
+
+<body>
+    <h1>Create a New Post</h1>
+
+    <form action="/api/post" method="POST">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" required />
+
+        <label for="content">Content:</label>
+        <textarea name="content" id="content" required></textarea>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <a href="/dashboard">Back to Dashboard</a>
+</body>
+
+</html>
