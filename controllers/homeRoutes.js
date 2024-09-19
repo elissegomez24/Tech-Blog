@@ -21,33 +21,21 @@ router.get('/', async (req, res) => {
         // Pass serialized data and session flag into template
         res.render('homepage', {
             posts,
-            logged_in: req.session.logged_in
+            loggedIn: req.session.loggedIn
         });
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-router.get('/post', async (req, res) => {
-    try {
-        // Fetch all posts (to display a list to choose from)
-        const postData = await Post.findAll({
-            include: [{ model: User, attributes: ['username'] }]
-        });
-
-        const posts = postData.map(post => post.get({ plain: true }));
-
-        res.render('create-post', {
-            posts,
-            logged_in: req.session.logged_in
-        });
-    } catch (err) {
-        res.status(500).json(err);
-    }
+// Create post route
+router.get('/create-post', withAuth, (req, res) => {
+    res.render('create-post', {
+        loggedIn: req.session.loggedIn
+    });
 });
 
-
-// Post details route by id. 
+// Post details route by ID
 router.get('/post/:id', async (req, res) => {
     try {
         const postData = await Post.findByPk(req.params.id, {
@@ -70,7 +58,7 @@ router.get('/post/:id', async (req, res) => {
 
         res.render('post', {
             ...post,
-            logged_in: req.session.logged_in,
+            loggedIn: req.session.loggedIn
         });
     } catch (err) {
         res.status(500).json(err);
@@ -90,7 +78,7 @@ router.get('/dashboard', (req, res) => {
 // Login route
 router.get('/login', (req, res) => {
     // If the user is already logged in, redirect to homepage
-    if (req.session.logged_in) {
+    if (req.session.loggedIn) {
         res.redirect('/');
         return;
     }
@@ -99,19 +87,11 @@ router.get('/login', (req, res) => {
 
 // Signup route
 router.get('/signup', (req, res) => {
-    // If the user is already logged in, redirect to homepage
-    if (req.session.logged_in) {
+    if (req.session.loggedIn) {
         res.redirect('/');
         return;
     }
     res.render('signup');
-});
-
-// Create post route
-router.get('/create-post', withAuth, (req, res) => {
-    res.render('create-post', {
-        logged_in: req.session.logged_in
-    });
 });
 
 module.exports = router;

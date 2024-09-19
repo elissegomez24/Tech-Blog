@@ -12,15 +12,23 @@ router.get('/post/:postId', async (req, res) => {
             },
         });
 
-        res.json(comments);
+        res.status(200).json(comments);
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err);
+        res.status(500).json({ message: 'Failed to retrieve comments', error: err });
     }
 });
 
 // Create a new comment
 router.post('/', withAuth, async (req, res) => {
     try {
+        const { content, post_id } = req.body;
+
+        // Ensure content and post_id are provided
+        if (!content || !post_id) {
+            return res.status(400).json({ message: 'Content and Post ID are required' });
+        }
+
         const newComment = await Comment.create({
             content: req.body.content,
             user_id: req.session.user_id,
@@ -29,13 +37,20 @@ router.post('/', withAuth, async (req, res) => {
 
         res.status(201).json(newComment);
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err);
+        res.status(500).json({ message: 'Failed to create comment', error: err });
     }
 });
 
 // Update an existing comment
 router.put('/:id', withAuth, async (req, res) => {
     try {
+        const { content } = req.body;
+
+        if (!content) {
+            return res.status(400).json({ message: 'Content is required to update comment' });
+        }
+
         const [updated] = await Comment.update(
             { content: req.body.content },
             {
@@ -47,12 +62,14 @@ router.put('/:id', withAuth, async (req, res) => {
         );
 
         if (updated) {
-            res.status(200).json({ message: 'Comment updated successfully' });
+            const updatedComment = await Comment.findOne({ where: { id: req.params.id } });
+            res.status(200).json({ message: 'Comment updated successfully', comment: updatedComment });
         } else {
             res.status(404).json({ message: 'Comment not found or not authorized' });
         }
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err);
+        res.status(500).json({ message: 'Failed to update comment', error: err });
     }
 });
 
@@ -72,7 +89,8 @@ router.delete('/:id', withAuth, async (req, res) => {
             res.status(404).json({ message: 'Comment not found or not authorized' });
         }
     } catch (err) {
-        res.status(500).json(err);
+        console.error(err);
+        res.status(500).json({ message: 'Failed to delete comment', error: err });
     }
 });
 

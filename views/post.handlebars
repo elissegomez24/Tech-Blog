@@ -1,25 +1,11 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{post.title}}</title>
-  </head>
-  <body>
-    <h1>{{post.title}}</h1>
-    <p>By: {{post.user.username}} on: {{format_date post.created_at}}</p>
-    <p>{{post.content}}</p>
+<h1>All Posts</h1>
 
-    {{#if loggedIn}}
-      <div>
-        <form class="comment-form" data-post-id="{{post.id}}">
-          <textarea placeholder="Leave a comment..."></textarea>
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-    {{else}}
-      <p>You need to <a href="/login">log in</a> to leave a comment.</p>
-    {{/if}}
+<ul>
+  {{#each posts}}
+    <li>
+      <a href='/post/{{this.id}}'>{{this.title}} by {{this.user.username}}</a>
+    </li>
+  {{/each}}
+</ul>
 
-    <a href="/dashboard">Back to Dashboard</a>
-  </body>
-</html>
+<a href='/create-post' class='btn btn-primary'>Create New Post</a>

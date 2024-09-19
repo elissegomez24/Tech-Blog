@@ -6,26 +6,40 @@ const postData = require('./postData.json');
 const commentData = require('./commentData.json');
 
 const seedDatabase = async () => {
-    await sequelize.sync({ force: true });
+    try {
+        // Sync the database 
+        await sequelize.sync({ force: true });
 
-    // Seed users
-    await User.bulkCreate(userData, {
-        individualHooks: true,
-        returning: true,
-    });
+        // Seed users
+        const users = await User.bulkCreate(userData, {
+            individualHooks: true,
+            returning: true,
+        });
 
-    // Seed posts
-    await Post.bulkCreate(postData, {
-        returning: true,
-    });
+        // Log users to check their IDs
+        console.log('Users seeded:', users);
 
-    // Seed comments
-    await Comment.bulkCreate(commentData, {
-        returning: true,
-    });
+        // Seed posts
+        const posts = await Post.bulkCreate(postData, {
+            returning: true,
+        });
 
-    console.log('Database seeded successfully');
-    process.exit(0);
+        // Log posts to check their IDs
+        console.log('Posts seeded:', posts);
+
+        // Seed comments
+        await Comment.bulkCreate(commentData, {
+            returning: true,
+        });
+
+        // Log success message and exit
+        console.log('Comments seeded');
+        console.log('Database seeded successfully!');
+        process.exit(0);
+    } catch (err) {
+        console.error('Failed to seed database:', err);
+        process.exit(1);
+    }
 };
 
 // Seed the database

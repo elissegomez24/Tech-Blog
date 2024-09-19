@@ -1,7 +1,7 @@
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Dashboard</title>
   </head>
   <body>
@@ -12,13 +12,13 @@
           <h2>{{this.title}}</h2>
           <p>{{this.content}}</p>
           <!-- Link to view the post -->
-          <a href="/post/{{this.id}}">View Post</a>
+          <a href='/post/{{this.id}}'>View Post</a>
         </div>
       {{/each}}
     {{else}}
       <p>No posts yet. Create one!</p>
     {{/if}}
 
-    <a href="/create-post">Create New Post</a>
+    <a href='/create-post'>Create New Post</a>
   </body>
 </html>

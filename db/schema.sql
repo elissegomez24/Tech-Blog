@@ -33,10 +33,3 @@ CREATE TABLE
         WITH
             TIME ZONE NOT NULL
     );
-
-SELECT
-    *
-FROM
-    "post"
-WHERE
-    "post"."id" = 'signup';

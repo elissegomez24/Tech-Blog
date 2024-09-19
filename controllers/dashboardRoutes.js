@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { Post } = require('../../models');
-const withAuth = require('../../utils/auth');
+const { Post, User } = require('../models');
+const withAuth = require('../utils/auth');
 
-// Get dashboard
+// Get dashboard with user's posts
 router.get('/', withAuth, async (req, res) => {
     try {
         const postData = await Post.findAll({
@@ -19,35 +19,32 @@ router.get('/', withAuth, async (req, res) => {
             loggedIn: req.session.loggedIn,
         });
     } catch (err) {
+        console.error(err);
         res.status(500).json(err);
     }
 });
 
-// Create a new post
-router.get('/post', async (req, res) => {
+// Route to All posts 
+router.get('/posts', withAuth, async (req, res) => {
     try {
-        // Fetch all posts from the database
         const postData = await Post.findAll({
-            include: [{ model: User, attributes: ['username'] }]
+            include: [{ model: User, attributes: ['username'] }],
         });
 
-        // Serialize the data
         const posts = postData.map(post => post.get({ plain: true }));
 
-        // Check if there are any posts
         if (posts.length === 0) {
-            // If no posts are available, render a page with a 'Create Post' button
             res.render('no-posts', {
-                logged_in: req.session.logged_in
+                loggedIn: req.session.loggedIn,
             });
         } else {
-            // If posts are available, render the posts page with the posts data
             res.render('posts', {
                 posts,
-                logged_in: req.session.logged_in
+                loggedIn: req.session.loggedIn,
             });
         }
     } catch (err) {
+        console.error(err);
         res.status(500).json(err);
     }
 });
@@ -57,16 +54,23 @@ router.put('/edit/:id', withAuth, async (req, res) => {
     try {
         const { title, content } = req.body;
 
-        const post = await Post.findByPk(req.params.id);
+        const [updated] = await Post.update(
+            { title, content },
+            {
+                where: {
+                    id: req.params.id,
+                    userId: req.session.userId,
+                },
+            }
+        );
 
-        if (post.userId !== req.session.userId) {
-            return res.status(403).json({ message: 'Not authorized' });
+        if (updated) {
+            res.status(200).json({ message: 'Post updated successfully' });
+        } else {
+            res.status(404).json({ message: 'Post not found or not authorized' });
         }
-
-        await post.update({ title, content });
-
-        res.redirect('/dashboard');
     } catch (err) {
+        console.error(err);
         res.status(500).json(err);
     }
 });
@@ -74,16 +78,20 @@ router.put('/edit/:id', withAuth, async (req, res) => {
 // Delete a post
 router.delete('/delete/:id', withAuth, async (req, res) => {
     try {
-        const post = await Post.findByPk(req.params.id);
+        const deleted = await Post.destroy({
+            where: {
+                id: req.params.id,
+                userId: req.session.userId,
+            },
+        });
 
-        if (post.userId !== req.session.userId) {
-            return res.status(403).json({ message: 'Not authorized' });
+        if (deleted) {
+            res.status(204).end();
+        } else {
+            res.status(404).json({ message: 'Post not found or not authorized' });
         }
-
-        await post.destroy();
-
-        res.redirect('/dashboard');
     } catch (err) {
+        console.error(err);
         res.status(500).json(err);
     }
 });
