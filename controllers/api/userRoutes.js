@@ -7,11 +7,10 @@ const { User } = require('../../models');
 router.post('/signup', async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const user = await User.create({
       username,
       email,
-      password: hashedPassword
+      password
     });
     req.session.userId = user.id; // Store the user ID in session
     req.session.save(err => {
@@ -43,14 +42,15 @@ router.post('/login', async (req, res) => {
           console.error('Session save error:', err);
           return res.status(500).send('Failed to save session.');
         }
-        res.redirect('/dashboard');
+        res.status(200).json(user)
       });
     } else {
-      res.status(400).render('login', { error: 'Invalid password or email.' });
+      console.log('invalid')
+      res.status(400).json('login', { error: 'Invalid password or email.' });
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).render('login', { error: 'Login failed. Please try again.' });
+    res.status(500).json('login', { error: 'Login failed. Please try again.' });
   }
 });
 
