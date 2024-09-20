@@ -14,7 +14,10 @@ const loginFormHandler = async (event) => {
         });
 
         if (response.ok) {
-            // If successful, redirect the browser to the profile page
+            // Show a successful login message
+            alert('Login successful! Redirecting to your dashboard...');
+
+            // Redirect the browser to the profile page
             document.location.replace('/dashboard');
         } else {
             alert(response.statusText);

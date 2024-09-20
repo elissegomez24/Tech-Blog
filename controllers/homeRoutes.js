@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
         // Pass serialized data and session flag into template
         res.render('homepage', {
             posts,
-            loggedIn: req.session.loggedIn
+            loggedIn: req.session.loggedIn,
         });
     } catch (err) {
         res.status(500).json(err);
@@ -67,13 +67,19 @@ router.get('/post/:id', async (req, res) => {
 
 // Dashboard route
 router.get('/dashboard', (req, res) => {
-    // If the user is already logged in, redirect to homepage
-    if (req.session.logged_in) {
-        res.redirect('/');
-        return;
+    // If the user is not logged in, redirect to login page
+    if (!req.session.logged_in) {
+        return res.redirect('/login');
     }
-    res.render('dashboard');
+    const message = req.query.message;
+
+    // Render the dashboard with the success message if available
+    res.render('dashboard', {
+        loggedIn: req.session.logged_in,
+        message: message
+    });
 });
+
 
 // Login route
 router.get('/login', (req, res) => {

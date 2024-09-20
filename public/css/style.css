@@ -117,6 +117,21 @@ article h2 {
   background: #c82333;
 }
 
+.no-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.no-button:hover {
+  color: #007bff;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   nav ul li {

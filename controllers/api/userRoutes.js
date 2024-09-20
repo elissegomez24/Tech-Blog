@@ -37,26 +37,26 @@ router.post('/login', async (req, res) => {
 
     if (user && await user.checkPassword(password)) {
       req.session.userId = user.id;
-      req.session.save(err => {
-        if (err) {
-          console.error('Session save error:', err);
-          return res.status(500).send('Failed to save session.');
-        }
-        res.status(200).json(user)
+      req.session.logged_in = true;
+
+      // Store success message in the session
+      req.session.message = 'You are now logged in!';
+      req.session.save(() => {
+        // Redirect to dashboard after successful login
+        res.redirect('/dashboard');
       });
     } else {
-      console.log('invalid')
-      res.status(400).json('login', { error: 'Invalid password or email.' });
+      res.status(400).json({ error: 'Invalid password or email.' });
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json('login', { error: 'Login failed. Please try again.' });
+    res.status(500).json({ error: 'Login failed. Please try again.' });
   }
 });
 
 // Logout route
-router.get('/logout', (req, res) => {
-  req.session.destroy(err => {
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
     if (err) {
       console.error('Session destroy error:', err);
       return res.redirect('/dashboard');
