@@ -1,11 +1,62 @@
-<h1>All Posts</h1>
+<div class="row"></div>
+  <div class="col-auto">
+    <h2>Welcome, {{user.username}}!</h2>
+  </div>
+</div>
 
-<ul>
-  {{#each posts}}
-    <li>
-      <a href='/post/{{this.id}}'>{{this.title}} by {{this.user.username}}</a>
-    </li>
-  {{/each}}
-</ul>
+<div class="row mt-4">
+  <div class="col-md-6">
+    <h3>Create a New Post:</h3>
 
-<a href='/create-post' class='btn btn-primary'>Create New Post</a>
+<div class='container mt-4'>
+  <!-- Post Title -->
+  <div class='row mb-3'>
+    <div class='col-md-12'>
+      <h1>{{post.title}}</h1>
+    </div>
+  </div>
+
+  <!-- Post Metadata -->
+  <div class='row mb-3'>
+    <div class='col-md-12'>
+      <p>Created by {{user.username}} on {{format_date post.createdAt}}</p>
+    </div>
+  </div>
+
+  <!-- Post Content -->
+  <div class='row mb-3'>
+    <div class='col-md-12'>
+      <p>{{post.content}}</p>
+    </div>
+  </div>
+
+  <!-- Delete Post Button by owner -->
+  {{#if loggedIn}}
+    {{#if isOwner}}
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <button class="btn btn-sm btn-danger delete-post-btn" data-id="{{post.id}}">Delete Post</button>
+        </div>
+      </div>
+    {{/if}}
+  {{/if}}
+
+  <!-- Comment Form -->
+  {{#if loggedIn}}
+    <div class='row'>
+      <div class='col-md-12'>
+        <form class='comment-form' data-post-id='{{post.id}}'>
+          <div class='form-group'>
+            <textarea
+              class='form-control'
+              placeholder='Leave a comment...'
+            ></textarea>
+          </div>
+          <button type='submit' class='btn btn-primary'>Submit</button>
+        </form>
+      </div>
+    </div>
+  {{/if}}
+</div>
+
+<script src="./js/profile.js"></script>

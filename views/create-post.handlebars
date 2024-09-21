@@ -1,4 +1,8 @@
-<html lang='en'>
+<div class="row"></div>
+<div class="col-auto">
+    <h2>Welcome! {{user.username}}</h2>
+</div>
+</div>
 
 <head>
     <meta charset='UTF-8' />
@@ -13,22 +17,18 @@
     <form action='/api/posts' method='POST'>
         <div>
             <label for='title'>Title:</label>
-            <input type='text' name='title' id='title' required 
-            class='w-full px-3 py-2 border rounded'/>
+            <input type='text' name='title' id='title' required class='w-full px-3 py-2 border rounded' />
         </div>
 
         <div>
             <label for='content'>Content:</label>
-            <textarea name='content' id='content' required
-            class='w-full px-3 py-2 border rounded'></textarea>
+            <textarea name='content' id='content' required class='w-full px-3 py-2 border rounded'></textarea>
         </div>
 
         <div>
             <button type='submit' class='btn btn-primary'>Submit</button>
     </form>
     </div>
-
-    <a href='/dashboard'>Back to Dashboard</a>
 </body>
 
 </html>

@@ -9,8 +9,6 @@ router.get('/', async (req, res) => {
             include: [User],
         });
         const posts = postData.map((post) => post.get({ plain: true }));
-        res.json(posts);
-
         res.render('dashboard', { posts, loggedIn: req.session.loggedIn });
     } catch (err) {
         res.status(500).json(err);
@@ -39,15 +37,15 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new post
-router.post('/', withAuth, async (req, res) => {
+router.post('/posts', withAuth, async (req, res) => {
     try {
         const newPost = await Post.create({
             title: req.body.title,
             content: req.body.content,
-            user_id: req.session.user_id,
+            user_id: req.session.userId,
         });
 
-        res.status(200).json(newPost);
+        res.redirect('/dashboard');
     } catch (err) {
         res.status(400).json(err);
     }
@@ -59,7 +57,7 @@ router.put('/:id', withAuth, async (req, res) => {
         const updatedPost = await Post.update(req.body, {
             where: {
                 id: req.params.id,
-                user_id: req.session.user_id,
+                user_id: req.session.userId,
             },
         });
 
@@ -76,10 +74,12 @@ router.put('/:id', withAuth, async (req, res) => {
 // Delete a post by ID
 router.delete('/:id', withAuth, async (req, res) => {
     try {
+        console.log(req.params.id)
+        console.log(req.session.userId)
         const deletedPost = await Post.destroy({
             where: {
                 id: req.params.id,
-                user_id: req.session.user_id,
+                user_id: req.session.userId, // Ensure the user can only delete their own posts
             },
         });
 
