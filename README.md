@@ -57,6 +57,10 @@ To set up the project locally, follow these steps:
 
 ## Screenshots:
 
+![alt text](<Images/Screenshot 1.png>)
+![alt text](<Images/Screenshot 2.png>)
+![alt text](<Images/Screenshot 3.png>)
+
 ## License
 
 This project is licensed under the [MIT LICENSE](LICENSE).
