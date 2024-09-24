@@ -55,7 +55,7 @@ To set up the project locally, follow these steps:
 4. Push to the branch (`git push origin feature-branch`).
 5. Open a pull request.
 
-## Screenshots:
+## Screenshots
 
 ![alt text](<Images/Screenshot 1.png>)
 ![alt text](<Images/Screenshot 2.png>)
