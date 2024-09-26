@@ -13,6 +13,8 @@ A blog platform where users can post, edit, and delete their own blog posts. The
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
 - [Screenshots](#screenshots)
+- [Deployment on Render](#deployment-on-render)
+- [Deployed Application](#deployed-application)
 - [License](#license)
 
 ## Installation
@@ -60,6 +62,18 @@ To set up the project locally, follow these steps:
 ![alt text](<Images/Screenshot 1.png>)
 ![alt text](<Images/Screenshot 2.png>)
 ![alt text](<Images/Screenshot 3.png>)
+
+## Deployment on Render
+
+To deploy the application using Render:
+
+1. **Push to GitHub**
+2. **Deploy on Render**
+3. **Access Your Application**
+
+## Deployed Application
+
+https://tech-blog-3njp.onrender.com
 
 ## License
 
